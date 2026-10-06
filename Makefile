@@ -42,8 +42,7 @@ build/image.bin: build/firmware.elf
 	llvm-objcopy $(OBJCPYFLAGS) $^ $@
 
 bin/image.txt: build/image.bin
-	echo 'origin 0x10' > $@
-	od -An -t x4 -v -w4 $^ | xargs -n1 printf '0x%s\n' >> $@
+	od -j 4 -An -t x4 -v -w4 $^ | xargs -n1 printf '0x%s\n' >> $@
 
 clean:
 	rm -rf build

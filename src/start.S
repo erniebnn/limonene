@@ -1,5 +1,6 @@
 .section .hardware, "a"
 .global fptr
+.word 0x0 // padding as address 0x0 is unusable
 fptr: .word 0x0
 
 .section .text
