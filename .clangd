@@ -1,0 +1,9 @@
+CompileFlags:
+  Add:
+    - -I../include
+    - --target=riscv32
+    - -march=rv32i
+    - -mabi=ilp32
+    - -ffreestanding
+    - -nostdlib
+    - -O3
