@@ -5,6 +5,7 @@ fptr: .word 0x0
 
 .section .text
 .global _start
+.global set_fptr
 
 _start:
     la sp, __stack_top
@@ -19,3 +20,9 @@ bssclear_end:
     call main
 loop:
     j loop
+
+set_fptr:
+    la t0, fptr
+    srli a0, a0, 0x2
+    sw a0, 0x0(t0)
+    ret
