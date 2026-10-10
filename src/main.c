@@ -36,15 +36,15 @@ void main() {
     Transform3D transform = {
         .tx = 0,
         .ty = 0,
-        .tz = utoq(5),
+        .tz = utoq(2),
         .rx = 0,
         .ry = 0,
         .rz = 0,
     };
-    u32 x0, y0, x1, y1;
-    to_screenspace(itoq(-1), itoq(-1), &x0, &y0);
-    to_screenspace(itoq( 1), itoq( 1), &x1, &y1);
-    draw_line(x0, y0, x1, y1, 255);
-    //draw_model_3d(transform, cube_vertices, cube_vertices_len, cube_edges, cube_edges_len, 255);
+    //u32 x0, y0, x1, y1;
+    //to_screenspace(itoq(-1), itoq(-1), &x0, &y0);
+    //to_screenspace(itoq( 1), itoq( 1), &x1, &y1);
+    //draw_line(x0, y0, x1, y1, 255);
+    draw_model_3d(transform, cube_vertices, cube_vertices_len, cube_edges, cube_edges_len, 255);
     swap();
 }

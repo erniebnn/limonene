@@ -117,27 +117,27 @@ void draw_model_3d(Transform3D p_transform, q16 p_vertices[][3], u32 p_vertices_
     q16 mat1[4][4];
     q16 mat2[4][4];
     // Rotation Around X
-    mat0[0][0] = Q16_ONE; mat0[1][0] =   0; mat0[2][0] =   0; mat0[3][0] =   0;
-    mat0[0][1] =   0; mat0[1][1] =  cx; mat0[2][1] = -sx; mat0[3][1] =   0;
-    mat0[0][2] =   0; mat0[1][2] =  sx; mat0[2][2] =  cx; mat0[3][2] =   0;
-    mat0[0][3] =   0; mat0[1][3] =   0; mat0[2][3] =   0; mat0[3][3] =   Q16_ONE;
+    mat0[0][0] = Q16_ONE; mat0[1][0] =   0; mat0[2][0] =   0; mat0[3][0] =         0;
+    mat0[0][1] =       0; mat0[1][1] =  cx; mat0[2][1] = -sx; mat0[3][1] =         0;
+    mat0[0][2] =       0; mat0[1][2] =  sx; mat0[2][2] =  cx; mat0[3][2] =         0;
+    mat0[0][3] =       0; mat0[1][3] =   0; mat0[2][3] =   0; mat0[3][3] =   Q16_ONE;
     // Rotation Around Y
-    mat1[0][0] =  cy; mat1[1][0] =   0; mat1[2][0] =  sy; mat1[3][0] =   0;
-    mat1[0][1] =   0; mat1[1][1] =   Q16_ONE; mat1[2][1] =   0; mat1[3][1] =   0;
-    mat1[0][2] = -sy; mat1[1][2] =   0; mat1[2][2] =  cy; mat1[3][2] =   0;
-    mat1[0][3] =   0; mat1[1][3] =   0; mat1[2][3] =   0; mat1[3][3] =   Q16_ONE;
+    mat1[0][0] =  cy; mat1[1][0] =         0; mat1[2][0] =  sy; mat1[3][0] =         0;
+    mat1[0][1] =   0; mat1[1][1] =   Q16_ONE; mat1[2][1] =   0; mat1[3][1] =         0;
+    mat1[0][2] = -sy; mat1[1][2] =         0; mat1[2][2] =  cy; mat1[3][2] =         0;
+    mat1[0][3] =   0; mat1[1][3] =         0; mat1[2][3] =   0; mat1[3][3] =   Q16_ONE;
     qmatmul4(mat2, mat1, mat0);
     // Rotation Around Z
-    mat1[0][0] =  cz; mat1[1][0] = -sz; mat1[2][0] =   0; mat1[3][0] =   0;
-    mat1[0][1] =  sz; mat1[1][1] =  cz; mat1[2][1] =   0; mat1[3][1] =   0;
-    mat1[0][2] =   0; mat1[1][2] =   0; mat1[2][2] =   Q16_ONE; mat1[3][2] =   0;
-    mat1[0][3] =   0; mat1[1][3] =   0; mat1[2][3] =   0; mat1[3][3] =   Q16_ONE;
+    mat1[0][0] =  cz; mat1[1][0] = -sz; mat1[2][0] =         0; mat1[3][0] =         0;
+    mat1[0][1] =  sz; mat1[1][1] =  cz; mat1[2][1] =         0; mat1[3][1] =         0;
+    mat1[0][2] =   0; mat1[1][2] =   0; mat1[2][2] =   Q16_ONE; mat1[3][2] =         0;
+    mat1[0][3] =   0; mat1[1][3] =   0; mat1[2][3] =         0; mat1[3][3] =   Q16_ONE;
     qmatmul4(mat0, mat1, mat2);
     // Translation
-    mat1[0][0] =   Q16_ONE; mat1[1][0] =   0; mat1[2][0] =   0; mat1[3][0] =  tx;
-    mat1[0][1] =   0; mat1[1][1] =   Q16_ONE; mat1[2][1] =   0; mat1[3][1] =  ty;
-    mat1[0][2] =   0; mat1[1][2] =   0; mat1[2][2] =   Q16_ONE; mat1[3][2] =  tz;
-    mat1[0][3] =   0; mat1[1][3] =   0; mat1[2][3] =   0; mat1[3][3] =   Q16_ONE;
+    mat1[0][0] =   Q16_ONE; mat1[1][0] =         0; mat1[2][0] =         0; mat1[3][0] =        tx;
+    mat1[0][1] =         0; mat1[1][1] =   Q16_ONE; mat1[2][1] =         0; mat1[3][1] =        ty;
+    mat1[0][2] =         0; mat1[1][2] =         0; mat1[2][2] =   Q16_ONE; mat1[3][2] =        tz;
+    mat1[0][3] =         0; mat1[1][3] =         0; mat1[2][3] =         0; mat1[3][3] =   Q16_ONE;
     qmatmul4(mat2, mat1, mat0);
     // Perspective
     mat1[0][0] = prspc0; mat1[1][0] =      0; mat1[2][0] =       0; mat1[3][0] =       0;
