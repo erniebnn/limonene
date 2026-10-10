@@ -140,11 +140,11 @@ void draw_model_3d(Transform3D p_transform, q16 p_vertices[][3], u32 p_vertices_
     mat1[0][3] =         0; mat1[1][3] =         0; mat1[2][3] =         0; mat1[3][3] =   Q16_ONE;
     qmatmul4(mat2, mat1, mat0);
     // Perspective
-    mat1[0][0] = prspc0; mat1[1][0] =      0; mat1[2][0] =       0; mat1[3][0] =       0;
-    mat1[0][1] =      0; mat1[1][1] = prspc1; mat1[2][1] =       0; mat1[3][1] =       0;
-    mat1[0][2] =      0; mat1[1][2] =      0; mat1[2][2] =  fcnst0; mat1[3][2] =  fcnst0;
-    mat1[0][3] =      0; mat1[1][3] =      0; mat1[2][3] = Q16_ONE; mat1[3][3] = Q16_ONE;
-    qmatmul4(mat0, mat1, mat2);
+    //mat1[0][0] = prspc0; mat1[1][0] =      0; mat1[2][0] =       0; mat1[3][0] =       0;
+    //mat1[0][1] =      0; mat1[1][1] = prspc1; mat1[2][1] =       0; mat1[3][1] =       0;
+    //mat1[0][2] =      0; mat1[1][2] =      0; mat1[2][2] =  fcnst0; mat1[3][2] =  fcnst0;
+    //mat1[0][3] =      0; mat1[1][3] =      0; mat1[2][3] = Q16_ONE; mat1[3][3] = Q16_ONE;
+    //qmatmul4(mat0, mat1, mat2);
     q16 vertices[p_vertices_len][4];
     u32 vertices2d[p_vertices_len][2];
     for (u32 i = 0; i < p_vertices_len; i++) {
@@ -154,9 +154,9 @@ void draw_model_3d(Transform3D p_transform, q16 p_vertices[][3], u32 p_vertices_
             p_vertices[i][2],
             Q16_ONE,
         };
-        qmatvecmul4(vertices[i], mat0, vertex);
-        vertices[i][0] = qdiv(vertices[i][0], vertices[i][3]);
-        vertices[i][1] = qdiv(vertices[i][1], vertices[i][3]);
+        qmatvecmul4(vertices[i], mat2, vertex);
+        //vertices[i][0] = qdiv(vertices[i][0], vertices[i][3]);
+        //vertices[i][1] = qdiv(vertices[i][1], vertices[i][3]);
         to_screenspace(vertices[i][0], vertices[i][1], &vertices2d[i][0], &vertices2d[i][1]);
     }
     for (u32 i = 0; i < p_edges_len; i++) {
