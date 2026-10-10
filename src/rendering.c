@@ -29,8 +29,8 @@ void initialize_rendering(RenderingMode p_mode) {
     set_fptr(fptr);
     dbg0 = (u32) fptr;
     dbg1 = (u32) bptr;
-    tscrnc0 = qdiv(1 << 16, (SCREEN_WIDTH  / 2) << 16);
-    tscrnc1 = qdiv(1 << 16, (SCREEN_HEIGHT / 2) << 16);
+    tscrnc0 = itoq(SCREEN_WIDTH - 1) >> 2;
+    tscrnc1 = itoq(SCREEN_HEIGHT - 1) >> 2;
     asprat = qdiv(utoq(SCREEN_WIDTH), utoq(SCREEN_HEIGHT));
     prspc0 = qdiv(Q16_ONE, qmul(asprat, qtan(qdiv(fov, 2))));
     prspc0 = qdiv(Q16_ONE,              qtan(qdiv(fov, 2)) );
@@ -93,7 +93,7 @@ void draw_line(u32 p_x0, u32 p_y0, u32 p_x1, u32 p_y1, u8 p_val) {
 
 void to_screenspace(q16 p_x0, q16 p_y0, u32* r_x0, u32* r_y0) {
     *r_x0 = qtou(qround(qmul(p_x0 + Q16_ONE, tscrnc0)));
-    *r_y0 = qtou(qround(-qmul(p_y0 + Q16_ONE, tscrnc1)));
+    *r_y0 = qtou(qround(qmul(Q16_ONE - p_y0, tscrnc1)));
 }
 
 void draw_model_2d(q16 p_vertices[][2], u32 p_vertices_len, u32 p_edges[][2], u32 p_edges_len, u8 p_val) {
