@@ -29,8 +29,8 @@ void initialize_rendering(RenderingMode p_mode) {
     set_fptr(fptr);
     dbg0 = (u32) fptr;
     dbg1 = (u32) bptr;
-    tscrnc0 = itoq(SCREEN_WIDTH - 1) >> 2;
-    tscrnc1 = itoq(SCREEN_HEIGHT - 1) >> 2;
+    tscrnc0 = itoq(SCREEN_WIDTH - 1) >> 1;
+    tscrnc1 = itoq(SCREEN_HEIGHT - 1) >> 1;
     asprat = qdiv(utoq(SCREEN_WIDTH), utoq(SCREEN_HEIGHT));
     prspc0 = qdiv(Q16_ONE, qmul(asprat, qtan(qdiv(fov, 2))));
     prspc0 = qdiv(Q16_ONE,              qtan(qdiv(fov, 2)) );
