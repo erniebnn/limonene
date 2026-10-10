@@ -1,0 +1,55 @@
+00000198 <clear>:
+     198: 00000613     	li	a2, 0x0
+     19c: 00000593     	li	a1, 0x0
+     1a0: 000026b7     	lui	a3, 0x2
+     1a4: 3086a683     	lw	a3, 0x308(a3)
+     1a8: 03600713     	li	a4, 0x36
+     1ac: 00060793     	mv	a5, a2
+     1b0: 04860613     	addi	a2, a2, 0x48
+     1b4: 0037c813     	xori	a6, a5, 0x3
+     1b8: 00178793     	addi	a5, a5, 0x1
+     1bc: 01068833     	add	a6, a3, a6
+     1c0: 00a80023     	sb	a0, 0x0(a6)
+     1c4: fec798e3     	bne	a5, a2, 0x1b4 <clear+0x1c>
+     1c8: 00158593     	addi	a1, a1, 0x1
+     1cc: fee590e3     	bne	a1, a4, 0x1ac <clear+0x14>
+     1d0: 00008067     	ret
+
+0000030c <clear>:
+     30c: fe010113     	addi	sp, sp, -0x20
+     310: 00112e23     	sw	ra, 0x1c(sp)
+     314: 00812c23     	sw	s0, 0x18(sp)
+     318: 02010413     	addi	s0, sp, 0x20
+     31c: 00a10ba3     	sb	a0, 0x17(sp)
+     320: 00000513     	li	a0, 0x0
+     324: 00a12823     	sw	a0, 0x10(sp)
+     328: 0040006f     	j	0x32c <clear+0x20>
+     32c: 01012583     	lw	a1, 0x10(sp)
+     330: 03500513     	li	a0, 0x35
+     334: 04b56e63     	bltu	a0, a1, 0x390 <clear+0x84>
+     338: 0040006f     	j	0x33c <clear+0x30>
+     33c: 00000513     	li	a0, 0x0
+     340: 00a12623     	sw	a0, 0xc(sp)
+     344: 0040006f     	j	0x348 <clear+0x3c>
+     348: 00c12583     	lw	a1, 0xc(sp)
+     34c: 04700513     	li	a0, 0x47
+     350: 02b56663     	bltu	a0, a1, 0x37c <clear+0x70>
+     354: 0040006f     	j	0x358 <clear+0x4c>
+     358: 00c12503     	lw	a0, 0xc(sp)
+     35c: 01012583     	lw	a1, 0x10(sp)
+     360: 01714603     	lbu	a2, 0x17(sp)
+     364: eedff0ef     	jal	0x250 <setpixel>
+     368: 0040006f     	j	0x36c <clear+0x60>
+     36c: 00c12503     	lw	a0, 0xc(sp)
+     370: 00150513     	addi	a0, a0, 0x1
+     374: 00a12623     	sw	a0, 0xc(sp)
+     378: fd1ff06f     	j	0x348 <clear+0x3c>
+     37c: 0040006f     	j	0x380 <clear+0x74>
+     380: 01012503     	lw	a0, 0x10(sp)
+     384: 00150513     	addi	a0, a0, 0x1
+     388: 00a12823     	sw	a0, 0x10(sp)
+     38c: fa1ff06f     	j	0x32c <clear+0x20>
+     390: 01c12083     	lw	ra, 0x1c(sp)
+     394: 01812403     	lw	s0, 0x18(sp)
+     398: 02010113     	addi	sp, sp, 0x20
+     39c: 00008067     	ret

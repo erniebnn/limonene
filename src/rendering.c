@@ -14,10 +14,14 @@ void initialize_rendering(RenderingMode p_mode) {
     fptr = framebuffer[0];
     bptr = rendering_mode == RM_DOUBLEBUFFER ? framebuffer[1] : framebuffer[0];
     set_fptr(fptr);
+    dbg0 = (u32) fptr;
+    dbg1 = (u32) bptr;
 }
 
 void setpixel(u32 p_x, u32 p_y, u8 p_val) {
-    *(bptr + p_y * SCREEN_WIDTH + p_x) = p_val;
+    u32 px_idx = p_y * SCREEN_WIDTH + p_x;
+    px_idx = px_idx ^ 0b11;
+    *(bptr + px_idx) = p_val;
 }
 
 u8 getpixel(u32 p_x, u32 p_y) {
@@ -33,8 +37,8 @@ void clear(u8 p_val) {
 }
 
 void draw_line(u32 p_x0, u32 p_y0, u32 p_x1, u32 p_y1, u8 p_val) {
-    i32 dx = p_x1 - p_x0;
-    i32 dy = p_y1 - p_y0;
+    i32 dx = (i32) p_x1 - (i32) p_x0;
+    i32 dy = (i32) p_y1 - (i32) p_y0;
     i32 ddx = signum(dx);
     i32 ddy = signum(dy);
     dx = abs(dx);
@@ -53,7 +57,7 @@ void draw_line(u32 p_x0, u32 p_y0, u32 p_x1, u32 p_y1, u8 p_val) {
     setpixel(x, y, p_val);
     for (u32 t = 0; t < dfd; t++) {
         err -= dsd;
-        if (err < 0) {
+        if (err <= 0) {
             err += dfd;
             x   += ddx;
             y   += ddy;
@@ -78,6 +82,8 @@ void draw_model(u32 p_vertices[][2], u32 p_vertices_len, u32 p_edges[][2], u32 p
 void swap() {
     volatile u8* tmp = fptr;
     fptr = bptr;
-    bptr = fptr;
+    bptr = tmp;
+    dbg0 = (u32) fptr;
+    dbg1 = (u32) bptr;
     set_fptr(fptr);
 }

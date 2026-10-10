@@ -20,5 +20,6 @@ u8 getpixel(u32 p_x, u32 p_y);
 void clear(u8 p_val);
 void draw_line(u32 p_x0, u32 p_y0, u32 p_x1, u32 p_y1, u8 p_val);
 void draw_model(u32 p_vertices[][2], u32 p_vertices_len, u32 p_edges[][2], u32 p_edges_len, u8 p_val);
+void swap();
 
 #endif // #ifndef __RENDERING_H__

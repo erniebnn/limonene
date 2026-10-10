@@ -12,5 +12,5 @@ u32 cube_vertices[][3] = {
 };
 
 u32 cube_vertices_len;
-u32 cube_edges[][2];
+u32 cube_edges[][2] = {{}};
 u32 cube_edges_len;
