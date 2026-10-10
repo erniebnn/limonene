@@ -7,13 +7,13 @@ CFLAGS := \
 	-mabi=ilp32 \
 	-nostdlib \
 	-O3 \
-	-g
+	-flto
 
 LDFLAGS := \
 	-m elf32lriscv \
 	-T linker.ld
 
-objects := build/main.o build/math.o build/models.o build/rendering.o build/start.o
+objects := build/main.o build/math.o build/models.o build/rendering.o build/q16.o build/start.o
 
 .PHONY: all firmware image clean
 

@@ -1,4 +1,5 @@
 #include "hardware.h"
+#include "models.h"
 #include "typedefs.h"
 #include "math.h"
 #include "rendering.h"
@@ -32,6 +33,14 @@ void main() {
     //setpixel(SCREEN_WIDTH-1, SCREEN_HEIGHT-1, 255);
     //setpixel(0             , SCREEN_HEIGHT-1, 255);
     //draw_line(5, 20, 20, 5, 255);
-    draw_model(vertices, vertices_len, edges, edges_len, 255);
+    Transform3D transform = {
+        .tx = 0,
+        .ty = 0,
+        .tz = 5,
+        .rx = 0,
+        .ry = 0,
+        .rz = 0,
+    };
+    draw_model_3d(transform, cube_vertices, cube_vertices_len, cube_edges, cube_edges_len, 255);
     swap();
 }
