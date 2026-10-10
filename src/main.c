@@ -36,7 +36,7 @@ void main() {
     Transform3D transform = {
         .tx = 0,
         .ty = 0,
-        .tz = 5,
+        .tz = utoq(5),
         .rx = 0,
         .ry = 0,
         .rz = 0,

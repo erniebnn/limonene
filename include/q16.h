@@ -6,6 +6,7 @@
 typedef i32 q16;
 
 extern const q16 Q16_PI;
+extern const q16 Q16_ONE;
 
 q16 itoq(i32 p_i0);
 i32 qtoi(q16 p_q0);

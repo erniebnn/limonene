@@ -32,8 +32,8 @@ void initialize_rendering(RenderingMode p_mode) {
     tscrnc0 = qdiv(1 << 16, (SCREEN_WIDTH  / 2) << 16);
     tscrnc1 = qdiv(1 << 16, (SCREEN_HEIGHT / 2) << 16);
     asprat = qdiv(utoq(SCREEN_WIDTH), utoq(SCREEN_HEIGHT));
-    prspc0 = qdiv(utoq(1), qmul(asprat, qtan(qdiv(fov, 2))));
-    prspc0 = qdiv(utoq(1),              qtan(qdiv(fov, 2)) );
+    prspc0 = qdiv(Q16_ONE, qmul(asprat, qtan(qdiv(fov, 2))));
+    prspc0 = qdiv(Q16_ONE,              qtan(qdiv(fov, 2)) );
     fcnst0 = qdiv(far, far - near);
     fcnst1 = qdiv(qmul(far, near), far - near);
 }
@@ -92,8 +92,8 @@ void draw_line(u32 p_x0, u32 p_y0, u32 p_x1, u32 p_y1, u8 p_val) {
 }
 
 void to_screenspace(q16 p_x0, q16 p_y0, u32* r_x0, u32* r_y0) {
-    *r_x0 = qtou(qround(qmul(p_x0 + utoq(1), tscrnc0)));
-    *r_y0 = qtou(qround(qmul(p_y0 + utoq(1), tscrnc1)));
+    *r_x0 = qtou(qround(qmul(p_x0 + Q16_ONE, tscrnc0)));
+    *r_y0 = qtou(qround(qmul(p_y0 + Q16_ONE, tscrnc1)));
 }
 
 void draw_model_2d(q16 p_vertices[][2], u32 p_vertices_len, u32 p_edges[][2], u32 p_edges_len, u8 p_val) {
@@ -117,33 +117,33 @@ void draw_model_3d(Transform3D p_transform, q16 p_vertices[][3], u32 p_vertices_
     q16 mat1[4][4];
     q16 mat2[4][4];
     // Rotation Around X
-    mat0[0][0] =   1; mat0[1][0] =   0; mat0[2][0] =   0; mat0[3][0] =   0;
+    mat0[0][0] = Q16_ONE; mat0[1][0] =   0; mat0[2][0] =   0; mat0[3][0] =   0;
     mat0[0][1] =   0; mat0[1][1] =  cx; mat0[2][1] = -sx; mat0[3][1] =   0;
     mat0[0][2] =   0; mat0[1][2] =  sx; mat0[2][2] =  cx; mat0[3][2] =   0;
-    mat0[0][3] =   0; mat0[1][3] =   0; mat0[2][3] =   0; mat0[3][3] =   1;
+    mat0[0][3] =   0; mat0[1][3] =   0; mat0[2][3] =   0; mat0[3][3] =   Q16_ONE;
     // Rotation Around Y
     mat1[0][0] =  cy; mat1[1][0] =   0; mat1[2][0] =  sy; mat1[3][0] =   0;
-    mat1[0][1] =   0; mat1[1][1] =   1; mat1[2][1] =   0; mat1[3][1] =   0;
+    mat1[0][1] =   0; mat1[1][1] =   Q16_ONE; mat1[2][1] =   0; mat1[3][1] =   0;
     mat1[0][2] = -sy; mat1[1][2] =   0; mat1[2][2] =  cy; mat1[3][2] =   0;
-    mat1[0][3] =   0; mat1[1][3] =   0; mat1[2][3] =   0; mat1[3][3] =   1;
+    mat1[0][3] =   0; mat1[1][3] =   0; mat1[2][3] =   0; mat1[3][3] =   Q16_ONE;
     qmatmul4(mat2, mat1, mat0);
     // Rotation Around Z
     mat1[0][0] =  cz; mat1[1][0] = -sz; mat1[2][0] =   0; mat1[3][0] =   0;
     mat1[0][1] =  sz; mat1[1][1] =  cz; mat1[2][1] =   0; mat1[3][1] =   0;
-    mat1[0][2] =   0; mat1[1][2] =   0; mat1[2][2] =   1; mat1[3][2] =   0;
-    mat1[0][3] =   0; mat1[1][3] =   0; mat1[2][3] =   0; mat1[3][3] =   1;
+    mat1[0][2] =   0; mat1[1][2] =   0; mat1[2][2] =   Q16_ONE; mat1[3][2] =   0;
+    mat1[0][3] =   0; mat1[1][3] =   0; mat1[2][3] =   0; mat1[3][3] =   Q16_ONE;
     qmatmul4(mat0, mat1, mat2);
     // Translation
-    mat1[0][0] =   1; mat1[1][0] =   0; mat1[2][0] =   0; mat1[3][0] =  tx;
-    mat1[0][1] =   0; mat1[1][1] =   1; mat1[2][1] =   0; mat1[3][1] =  ty;
-    mat1[0][2] =   0; mat1[1][2] =   0; mat1[2][2] =   1; mat1[3][2] =  tz;
-    mat1[0][3] =   0; mat1[1][3] =   0; mat1[2][3] =   0; mat1[3][3] =   1;
+    mat1[0][0] =   Q16_ONE; mat1[1][0] =   0; mat1[2][0] =   0; mat1[3][0] =  tx;
+    mat1[0][1] =   0; mat1[1][1] =   Q16_ONE; mat1[2][1] =   0; mat1[3][1] =  ty;
+    mat1[0][2] =   0; mat1[1][2] =   0; mat1[2][2] =   Q16_ONE; mat1[3][2] =  tz;
+    mat1[0][3] =   0; mat1[1][3] =   0; mat1[2][3] =   0; mat1[3][3] =   Q16_ONE;
     qmatmul4(mat2, mat1, mat0);
     // Perspective
     mat1[0][0] = prspc0; mat1[1][0] =      0; mat1[2][0] =       0; mat1[3][0] =       0;
     mat1[0][1] =      0; mat1[1][1] = prspc1; mat1[2][1] =       0; mat1[3][1] =       0;
     mat1[0][2] =      0; mat1[1][2] =      0; mat1[2][2] =  fcnst0; mat1[3][2] =  fcnst0;
-    mat1[0][3] =      0; mat1[1][3] =      0; mat1[2][3] = utoq(1); mat1[3][3] =       1;
+    mat1[0][3] =      0; mat1[1][3] =      0; mat1[2][3] = Q16_ONE; mat1[3][3] = Q16_ONE;
     qmatmul4(mat0, mat1, mat2);
     q16 vertices[p_vertices_len][4];
     u32 vertices2d[p_vertices_len][2];
@@ -152,7 +152,7 @@ void draw_model_3d(Transform3D p_transform, q16 p_vertices[][3], u32 p_vertices_
             p_vertices[i][0],
             p_vertices[i][1],
             p_vertices[i][2],
-            utoq(1),
+            Q16_ONE,
         };
         qmatvecmul4(vertices[i], mat0, vertex);
         vertices[i][0] = qdiv(vertices[i][0], vertices[i][3]);

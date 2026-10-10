@@ -1,6 +1,7 @@
 #include "q16.h"
 
 const q16 Q16_PI = 0x3243F;
+const q16 Q16_ONE = 1 << 16;
 
 static q16 q16_sin_lut[] = {
     0x00000000,
