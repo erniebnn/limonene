@@ -551,52 +551,80 @@ q16 qround(q16 p_q0) {
     return (p_q0 & 0x8000) ? (p_q0 | 0xFFFF) + 1 : p_q0 & 0xFFFF0000;
 }
 
-q16 qmul(q16 p_q0, q16 p_q1) {
-    q16 res = 0;
-    for (u32 i = 0; i < 31; i++) {
-        if (p_q0 >> i & 0b1) {
-            if (i < 16) {
-                res += p_q1 >> (16 - i);
-            }
-            else {
-                res += p_q1 << (i - 16);
+#ifdef __riscv_mul
+    q16 qmul(q16 p_q0, q16 p_q1) {
+        q16 res;
+        asm (
+            "mulh t0, %1, %2\n"
+            "mul  t1, %1, %2\n"
+            "slli t0, t0, 16\n"
+            "srli t1, t1, 16\n"
+            "or   %0, t0, t1\n"
+          : "=r"(res)
+          : "r"(p_q0), "r"(p_q1)
+          : "t0", "t1"
+        );
+        return res;
+    }
+#else
+    q16 qmul(q16 p_q0, q16 p_q1) {
+        q16 res = 0;
+        for (u32 i = 0; i < 31; i++) {
+            if (p_q0 >> i & 0b1) {
+                if (i < 16) {
+                    res += p_q1 >> (16 - i);
+                }
+                else {
+                    res += p_q1 << (i - 16);
+                }
             }
         }
+        if (p_q0 >> 31 & 0b1) {
+            res -= p_q1 << 15;
+        }
+        return res;
     }
-    if (p_q0 >> 31 & 0b1) {
-        res -= p_q1 << 15;
-    }
-    return res;
-}
+#endif
 
 struct _divres { q16 q; q16 r; };
 
-static struct _divres qdiv_impl(q16 p_q0, q16 p_q1) {
-    if (p_q1 == 0) { return (struct _divres) { .q = -1, .r = p_q0 }; }
-    i32 a = (i32) qabs(p_q0);
-    i32 b = (i32) qabs(p_q1);
-    u32 s0 = (u32) p_q0 >> 31, s1 = (u32) p_q1 >> 31;
-    u32 r = a >> 16;
-    u32 q = a << 16;
-    u32 s, c;
-    for (u32 i = 0; i < 32; i++) {
-        s = r >> 31;
-        c = q >> 31;
-        q = q << 1;
-        r = r << 1 | c;
-        r += s ? b : -b;
-        s = r >> 31;
-        q = q | 1 - s;
+#ifdef __riscv_div
+    static struct _divres qdiv_impl(q16 p_q0, q16 p_q1) {
+        struct _divres res;
+        asm (
+            "slli t0, %2, "
+            "div  t0, %2, %3\n"
+            "rem  t1, %2, %3\n"
+            ""
+        );
     }
-    if (s) {
-        r += b;
+#else
+    static struct _divres qdiv_impl(q16 p_q0, q16 p_q1) {
+        if (p_q1 == 0) { return (struct _divres) { .q = -1, .r = p_q0 }; }
+        i32 a = (i32) qabs(p_q0);
+        i32 b = (i32) qabs(p_q1);
+        u32 s0 = (u32) p_q0 >> 31, s1 = (u32) p_q1 >> 31;
+        u32 r = a >> 16;
+        u32 q = a << 16;
+        u32 s, c;
+        for (u32 i = 0; i < 32; i++) {
+            s = r >> 31;
+            c = q >> 31;
+            q = q << 1;
+            r = r << 1 | c;
+            r += s ? b : -b;
+            s = r >> 31;
+            q = q | 1 - s;
+        }
+        if (s) {
+            r += b;
+        }
+        struct _divres res;
+        res.q = s0 ^ s1 ? -(q16)q : (q16)q;
+        res.r = s0      ? -(q16)r : (q16)r;
+        return res;
     }
-    struct _divres res;
-    res.q = s0 ^ s1 ? -(q16)q : (q16)q;
-    res.r = s0      ? -(q16)r : (q16)r;
-    return res;
-}
-
+#endif
 q16 qdiv(q16 p_q0, q16 p_q1) {
     return qdiv_impl(p_q0, p_q1).q;
 }

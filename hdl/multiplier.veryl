@@ -1,0 +1,107 @@
+// Multicycle EU Interface
+// -> Enable
+// -> Issue
+// -> Abort
+// <- Accept
+// <- Busy
+
+module multiplier #(
+    param XLEN: u32 = 32,
+) (
+    i_clk   : input  clock      ,
+    i_rst   : input  reset      ,
+
+    i_enable: input  logic      ,
+    i_issue : input  logic      ,
+    i_abort : input  logic      ,
+    o_acc   : output logic      ,
+    o_busy  : output logic      ,
+
+    i_op    : input  MulOp      ,
+    i_arg1  : input  logic<XLEN>,
+    i_arg2  : input  logic<XLEN>,
+    o_res   : output logic<XLEN>,
+
+    i_rs1   : input  logic<5>   ,
+    i_rs2   : input  logic<5>   ,
+    i_rd    : input  logic<5>   ,
+) {
+    enum MulOp : logic<2> {
+        MUL    = 2'b00,
+        MULH   = 2'b01,
+        MULHSU = 2'b10,
+        MULHU  = 2'b11,
+    }
+
+    var r_active     : logic      ;
+    var r_cache_valid: logic      ;
+    var r_cache_rs1  : logic<5>   ;
+    var r_cache_rs2  : logic<5>   ;
+    var r_counter    : logic<3>   ;
+    var r_res_high   : logic<XLEN>;
+    var r_res_low    : logic<XLEN>;
+
+    var w_acc        : logic;
+    var w_rel        : logic;
+    var w_ready      : logic;
+    var w_activate   : logic;
+    let w_cache_hit  : logic = (r_cache_rs1 == i_rs1) && (r_cache_rs2 == i_rs2) && (i_op == MulOp::MUL) && r_cache_valid;
+    let w_accum      : logic<XLEN> = if r_counter == 0 ? '0 : r_res_high;
+
+    var w_pprod: logic<XLEN>     [4];
+    var w_pres : logic<XLEN + 1> [5];
+    let w_cres : logic<4> = {w_pres[1][0], w_pres[2][0], w_pres[3][0], w_pres[4][0]};
+
+    for i in 0..4 : mul {
+        
+    }
+
+    always_comb {
+        w_pres[0] = {w_accum, 1'b0};
+        for i in 0..4 {
+            w_pprod[i] = if i_arg2[4 * r_counter + i] ? i_arg1 : '0;
+        }
+        for i in 1..5 {
+            w_pres [i] = (w_pres[i - 1] >> 1) + w_pprod[i - 1];
+        }
+    }
+
+    assign w_acc      = i_enable && i_issue && w_ready;
+    assign w_ready    = !r_active || w_rel;
+    assign w_activate = w_acc && !w_cache_hit;
+
+    assign o_acc  = w_acc;
+    assign o_busy = r_active || (w_acc && !w_cache_hit);
+    assign o_res  = if i_op == MulOp::MUL ? r_res_low : r_res_high;
+
+    always_ff (i_clk, i_rst) {
+        if_reset {
+            r_active      =  0;
+            r_cache_valid =  0;
+            r_cache_rs1   = 'x;
+            r_cache_rs2   = 'x;
+            r_res_high    = 'x;
+            r_res_low     = 'x;
+        }
+        else {
+            if (w_acc) {
+                r_cache_valid = (i_rs1 != i_rd) && (i_rs2 != i_rd);
+                r_cache_rs1   =  i_rs1;
+                r_cache_rs2   =  i_rs2;
+            }
+            else if (i_issue) {
+                r_cache_valid = 0;
+            }
+
+            if (r_active) {
+                r_res_high = w_pres[3] >> 1;
+                r_res_low  = {w_cres, r_res_low[msb:4]};
+            }
+            else {
+                r_active = w_activate;
+            }
+
+            r_active = if r_active ? w_rel : w_activate;
+        }
+    }
+}
